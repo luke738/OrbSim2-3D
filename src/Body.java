@@ -108,16 +108,16 @@ public class Body
                     double vol = mass / (body.density*massFrac+density*(1-massFrac));
                     //double oVol = body.mass / body.density;
                     size = Math.cbrt((3D / 4D) * vol / Math.PI);
-                    double relativeMass = mass/SystemSimulator.maxMass;
-                    System.out.println(relativeMass);
-                    if (relativeMass<=1)
+                    double relativeSize = size/SystemSimulator.maxSize;
+                    System.out.println(relativeSize);
+                    if (relativeSize<=1)
                     {
-                        color = new int[]{(int)relativeMass*255, 0, (int) (color[2] * (1 - massFrac) + body.color[2] * (massFrac))};
+                        color = new int[]{(int)(relativeSize*255), 0, (int) (color[2] * (1 - massFrac) + body.color[2] * (massFrac))};
                     }
                     else
                     {
-                        System.out.println("g "+(int)((255D/SystemSimulator.initNumBodies)*(int)(relativeMass)));
-                        color = new int[]{(int)(255*(relativeMass/Math.ceil(relativeMass))), (int)((255D/SystemSimulator.initNumBodies)*(int)(relativeMass)), (int) (color[2] * (1 - massFrac) + body.color[2] * (massFrac))};
+                        System.out.println("g "+(int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)));
+                        color = new int[]{(int)(255*(relativeSize/Math.ceil(relativeSize))), (int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)), (int) (color[2] * (1 - massFrac) + body.color[2] * (massFrac))};
                     }
                     location=new Vector3D(location.x*(1-massFrac)+body.location.x*massFrac, location.y*(1-massFrac)+body.location.y*(massFrac), location.z*(1-massFrac)+body.location.z*(massFrac));
                     //System.out.println("m "+momentum);

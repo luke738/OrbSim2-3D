@@ -18,10 +18,10 @@ public class SystemSimulator
     /**A conversion factor from pixels to meter; each pixel is equal to this number of meters.*/
     public static double spaceCompression = 1000000000;
     /**A conversion factor from each frame in the simulation to seconds; each frame is equal to this number of seconds*/
-    public static double timeCompression = 86400/4;
+    public static double timeCompression = 86400/2;
     /**Keeps track of how many frames have passed; used to pick an integration method and for timekeeping*/
     private int stepCount = 0;
-    public static double maxMass;
+    public static double maxSize;
     public static int initNumBodies;
 
     /**Accepts no parameters, populates bodies with contents of populateSystem().*/
@@ -34,8 +34,8 @@ public class SystemSimulator
      * Once the simulation is launched, bodies can only be removed (through collision)*/
     public void populateSystem()
     {
-        int maxI = 1;
-        Random rand = new Random(37);
+        int maxI = 3;
+        Random rand = new Random(38);
         for (int i = 0; i < maxI*16; i++)
         {
             for (int j = 0; j < maxI*9; j++)
@@ -49,7 +49,7 @@ public class SystemSimulator
                 double r7 = rand.nextDouble();
                 double r8 = rand.nextDouble();
                 double r9 = rand.nextDouble();
-                bodies.add(new Body(Integer.toString(i)+"."+Integer.toString(j), 2*((r1+1)/2)*Math.pow(10, 27), 1000000000*((r2+1)/2), new Vector3D(r3*SystemAnimator.B_WIDTH*SystemSimulator.spaceCompression, r4*SystemAnimator.B_HEIGHT*SystemSimulator.spaceCompression, r7*SystemAnimator.B_DEPTH*SystemSimulator.spaceCompression), new Vector3D((r5*2-1)*1000, (r6*2-1)*1000, (r8*2-1)*1000), new int[]{0, 0, (int)(255*r9)}));
+                bodies.add(new Body(Integer.toString(i)+"."+Integer.toString(j), 2*((r1+1)/2)*Math.pow(10, 27), 1000000000*((r2+1)/2), new Vector3D(r3*SystemAnimator.B_WIDTH*SystemSimulator.spaceCompression, r4*SystemAnimator.B_HEIGHT*SystemSimulator.spaceCompression, r7*SystemAnimator.B_DEPTH*SystemSimulator.spaceCompression), new Vector3D((2-1)*20000*((r4-0.5)), (2-1)*20000*-((r3-0.5)), (r8*2-1.1)*10000), new int[]{0, 0, (int)(255*r9)}));
             }
         }
         /*bodies.add(new Body("Sun", 1.988*Math.pow(10, 30), 6.955*Math.pow(10, 8), new Vector3D(50*11 * SystemSimulator.spaceCompression, 50*7 * SystemSimulator.spaceCompression, 0), new Vector3D(0,0,0), new int[]{255, 255, 128}));
@@ -69,11 +69,11 @@ public class SystemSimulator
         bodies.sort(new Comparator<Body>() {
             @Override
             public int compare(Body o1, Body o2) {
-                if (o1.size>o2.size)
+                if (o1.size<o2.size)
                 {
                     return 1;
                 }
-                else if (o2.size>o1.size)
+                else if (o2.size<o1.size)
                 {
                     return -1;
                 }
@@ -83,10 +83,20 @@ public class SystemSimulator
                 }
             }
         });
-        maxMass=bodies.get(0).mass;
+        maxSize=bodies.get(0).size;
         for (Body body : bodies)
         {
-            body.color[0]=(int)(255D/bodies.size())*(bodies.indexOf(body)+1);
+            double relativeSize = body.size/SystemSimulator.maxSize;
+            System.out.println(relativeSize);
+            if (relativeSize<=1)
+            {
+                body.color = new int[]{(int)(relativeSize*255), 0, body.color[2]};
+            }
+            else
+            {
+                System.out.println("g "+(int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)));
+                body.color = new int[]{(int)(255*(relativeSize/Math.ceil(relativeSize))), (int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)), body.color[2]};
+            }
         }
     }
 
@@ -137,9 +147,9 @@ public class SystemSimulator
             body.collisionChk();
         }
         stepCount++;
-        if(stepCount%(365*4)==0)
+        if(stepCount%(365*2)==0)
         {
-            System.out.println("Year: "+stepCount/(365*4));
+            System.out.println("Year: "+stepCount/(365*2));
         }
     }
 
