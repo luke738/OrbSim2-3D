@@ -27,15 +27,15 @@ public class SystemSimulator
     /**Accepts no parameters, populates bodies with contents of populateSystem().*/
     public SystemSimulator()
     {
-        populateSystem();
+        populateSystem(1);
     }
 
     /**Creates the Body objects and adds them to the bodies ArrayList.
      * Once the simulation is launched, bodies can only be removed (through collision)*/
-    public void populateSystem()
+    public void populateSystem(int seed)
     {
-        int maxI = 3;
-        Random rand = new Random(38);
+        double maxI = 2.9;
+        Random rand = new Random(seed);
         for (int i = 0; i < maxI*16; i++)
         {
             for (int j = 0; j < maxI*9; j++)
@@ -60,7 +60,7 @@ public class SystemSimulator
         //bodies.add(new Body("Test1", Math.pow(10,30), 5*Math.pow(10,8), new Vector3D(50*10 * SystemSimulator.spaceCompression, 50*7 * SystemSimulator.spaceCompression, 0), new Vector3D(0,0,0), new int[]{255, 0, 0}));
         //bodies.add(new Body("Test2", Math.pow(10,30), 5*Math.pow(10,8), new Vector3D(50*12 * SystemSimulator.spaceCompression, 50*7 * SystemSimulator.spaceCompression, 0), new Vector3D(0,0,0), new int[]{0, 0, 255}));
         colorDimension();
-        System.out.println(bodies.size());
+        //System.out.println(bodies.size());
         initNumBodies = bodies.size();
     }
 
@@ -87,7 +87,7 @@ public class SystemSimulator
         for (Body body : bodies)
         {
             double relativeSize = body.size/SystemSimulator.maxSize;
-            System.out.println(relativeSize);
+            //System.out.println(relativeSize);
             if (relativeSize<=1)
             {
                 body.color = new int[]{(int)(relativeSize*255), 0, body.color[2]};
@@ -98,6 +98,13 @@ public class SystemSimulator
                 body.color = new int[]{(int)(255*(relativeSize/Math.ceil(relativeSize))), (int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)), body.color[2]};
             }
         }
+    }
+
+    public void reset()
+    {
+        bodies.clear();
+        populateSystem(stepCount);
+        stepCount=0;
     }
 
     /**Updates the velocity and position of each Body each frame.

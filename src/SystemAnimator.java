@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This class runs the animation itself.
@@ -7,14 +9,20 @@ import java.awt.*;
  * Creates a single SystemSimulator by default, but the addition of multiple could allow for comparison of initial conditions.
  */
 public class SystemAnimator extends JPanel
-        implements Runnable
+        implements Runnable, ActionListener
 {
-    public static final int B_WIDTH = 50*22;
-    public static final int B_HEIGHT = 50*14;
-    public static final int B_DEPTH = 50*10;
+    public static final int B_WIDTH = 1600;
+    public static final int B_HEIGHT = 900;
+    public static final int B_DEPTH = 900;
     private final int DELAY = 1;
 
     private Thread animator;
+
+    //Create JPanels for each button
+    JPanel resetPanel = new JPanel();
+
+    //Create reset button
+    JButton resetButton = new JButton("Reset");
 
     public SystemAnimator()
     {
@@ -25,6 +33,21 @@ public class SystemAnimator extends JPanel
 
     private void initBoard()
     {
+        //Name the action message used by the reset button
+        //Add SystemDrawer as the ActionListener of the button
+        resetButton.setActionCommand("reset");
+        resetButton.addActionListener(this);
+
+        //Prepare window to draw GUI elements
+        this.setLayout(null);
+
+        //Set the size and location of the button, and add it to the screen
+        resetPanel.setLayout(null);
+        resetButton.setSize(100, 50);
+        resetPanel.add(resetButton);
+        add(resetPanel);
+        resetPanel.setBounds(0, 0, 100, 50);
+
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         setDoubleBuffered(true);
@@ -58,7 +81,14 @@ public class SystemAnimator extends JPanel
 
         while (true)
         {
-            sysSim.updateSystem();
+            try
+            {
+                sysSim.updateSystem();
+            }
+            catch (Exception e)
+            {
+                System.out.println("SYSTEM DROPPED SIM STEP");
+            }
             repaint();
 
             timeDiff = System.currentTimeMillis() - beforeTime;
@@ -78,6 +108,14 @@ public class SystemAnimator extends JPanel
             }
 
             beforeTime = System.currentTimeMillis();
+        }
+    }
+
+    //Event handling for reset button
+    public void actionPerformed(ActionEvent e) {
+        if ("reset".equals(e.getActionCommand()))
+        {
+            sysSim.reset();
         }
     }
 }

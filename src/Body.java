@@ -109,14 +109,14 @@ public class Body
                     //double oVol = body.mass / body.density;
                     size = Math.cbrt((3D / 4D) * vol / Math.PI);
                     double relativeSize = size/SystemSimulator.maxSize;
-                    System.out.println(relativeSize);
+                    //System.out.println(relativeSize);
                     if (relativeSize<=1)
                     {
                         color = new int[]{(int)(relativeSize*255), 0, (int) (color[2] * (1 - massFrac) + body.color[2] * (massFrac))};
                     }
                     else
                     {
-                        System.out.println("g "+(int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)));
+                        //System.out.println("g "+(int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)));
                         color = new int[]{(int)(255*(relativeSize/Math.ceil(relativeSize))), (int)((255D/SystemSimulator.initNumBodies)*(int)(relativeSize)), (int) (color[2] * (1 - massFrac) + body.color[2] * (massFrac))};
                     }
                     location=new Vector3D(location.x*(1-massFrac)+body.location.x*massFrac, location.y*(1-massFrac)+body.location.y*(massFrac), location.z*(1-massFrac)+body.location.z*(massFrac));
@@ -126,7 +126,7 @@ public class Body
                     setAllVel(momentum.scalarMult(1 / mass));
                     body.doRemove=true;
                     setAllAccel();
-                    if(velocity.getMag()>1500)
+                    if(velocity.getMag()>15000)
                     {
                         System.out.println("WARN: "+ident);
                         System.out.println(momentum);
